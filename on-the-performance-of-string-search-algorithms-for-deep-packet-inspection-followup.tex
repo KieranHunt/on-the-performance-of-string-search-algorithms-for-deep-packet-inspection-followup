@@ -1,0 +1,116 @@
+\documentclass[11pt]{article}
+\usepackage[round]{natbib}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{pgf}
+\usepackage[most]{tcolorbox}
+\usepackage[margin=1in]{geometry}
+\usepackage{xcolor}
+\usepackage{inconsolata}
+\usepackage{cleveref}
+\usepackage[inline]{enumitem}
+\usepackage{dcolumn}
+\usepackage{booktabs}
+
+\usepackage[scaled]{helvet}
+\renewcommand\familydefault{\sfdefault}
+\usepackage[T1]{fontenc}
+
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+\definecolor{atomred}{RGB}{224, 108, 117}
+\definecolor{atomwhite}{RGB}{250, 250, 250}
+
+\lstdefinelanguage{JavaScript}{
+  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{atomred}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstset{
+   language=JavaScript,
+   backgroundcolor=\color{atomwhite},
+   extendedchars=true,
+   basicstyle=\ttfamily\footnotesize,
+   showstringspaces=false,
+   showspaces=false,
+   numbers=left,
+   numberstyle=\ttfamily\footnotesize,
+   numbersep=5pt,
+   tabsize=2,
+   breaklines=true,
+   showtabs=false,
+   captionpos=b,
+   frame=single
+}
+
+\begin{document}
+
+\title{On the Performance of String Search Algorithms for Deep Packet Inspection - Followup}
+\author{Kieran Hunt}
+\date{\today}
+\maketitle
+
+%TODO: Abstract
+
+\section{Parallelism}
+
+\begin{table}[]
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tabular}{@{}lllllll@{}}
+\toprule
+\multicolumn{1}{c}{\textbf{\#Threads}} & \multicolumn{1}{c}{\textbf{Min}} & \multicolumn{1}{c}{\textbf{First Quartile}} & \multicolumn{1}{c}{\textbf{Median}} & \multicolumn{1}{c}{\textbf{Mean}} & \multicolumn{1}{c}{\textbf{Third Quartile}} & \multicolumn{1}{c}{\textbf{Max}} \\ \midrule
+\multicolumn{7}{|c|}{\textbf{Horspool}} \\ \midrule
+1 & 0.01093 & 0.01789 & 0.01975 & 0.02976 & 0.025454 & 113.8 \\
+2 & 0.01417 & 0.01765 & 0.01948 & 0.03234 & 0.02243 & 88.51 \\
+4 & 0.02127 & 0.02871 & 0.03033 & 0.04429 & 0.03249 & 83.72 \\
+8 & 0.04180 & 0.05396 & 0.05636 & 0.06813 & 0.05965 & 1.711 \\
+16 & 0.08152 & 0.10160 & 0.10830 & 0.1254 & 0.1155 & 41.33 \\
+32 & 0.1673 & 0.2013 & 0.2060 & 0.2219 & 0.2212 & 43.47 \\
+64 & 0.2075 & 0.2472 & 0.2527 & 0.2748 & 0.2585 & 46.45 \\ \midrule
+\multicolumn{7}{|c|}{\textbf{QuickSearch}} \\ \midrule
+1 & 0.011 & 0.01875 & 0.02053 & 0.09744 & 0.10490 & 101.6 \\
+2 & 0.01458 & 0.01826 & 0.01998 & 0.03201 & 0.02305 & 77.34 \\
+4 & 0.02195 & 0.02896 & 0.03081 & 0.04357 & 0.03329 & 41.38 \\
+8 & 0.04068 & 0.05449 & 0.05716 & 0.06911 & 0.06078 & 60.37 \\
+16 & 0.08276 & 0.10570 & 0.11140 & 0.12850 & 0.11810 & 2.57 \\
+32 & 0.1666 & 0.2027 & 0.2070 & 0.2234 & 0.2112 & 67.05 \\
+64 & 0.2071 & 0.2497 & 0.2545 & 0.2765 & 0.2602 & 51.87 \\ \midrule
+\multicolumn{7}{|c|}{\textbf{NotSoNaive}} \\ \midrule
+1 & 0.0209 & 0.06106 & 0.08284 & 0.09744 & 0.10490 & 101.6 \\
+2 & 0.02067 & 0.04527 & 0.06505 & 0.08073 & 0.08318 & 51.95 \\
+4 & 0.02419 & 0.04267 & 0.05576 & 0.07508 & 0.07021 & 70.09 \\
+8 & 0.04168 & 0.06426 & 0.07736 & 0.10310 & 0.09270 & 86.72 \\
+16 & 0.09269 & 0.11810 & 0.12940 & 0.16490 & 0.14720 & 113.6 \\
+32 & 0.1808 & 0.2142 & 0.2236 & 0.2633 & 0.2357 & 125.1 \\
+64 & 0.225 & 0.2603 & 0.2745 & 0.3179 & 0.2928 & 101.5 \\ \midrule
+\multicolumn{7}{|c|}{\textbf{RabinKarp}} \\ \midrule
+1 & 0.1255 & 0.2199 & 0.2568 & 0.354 & 0.3514 & 6.089 \\
+2 & 0.07012 & 0.1112 & 0.1198 & 0.17030 & 0.1508 & 71.19 \\
+4 & 0.04853 & 0.07102 & 0.07510 & 0.10870 & 0.09271 & 1.496 \\
+8 & 0.05 & 0.06563 & 0.06921 & 0.09129 & 0.08045 & 1.37 \\
+16 & 0.08799 & 0.11440 & 0.12130 & 0.14250 & 0.12890 & 38.61 \\
+32 & 0.1886 & 0.2047 & 0.2092 & 0.288 & 0.2154 & 2.058 \\
+64 & 0.2118 & 0.254 & 0.2592 & 0.283 & 0.2657 & 81.63 \\ \bottomrule
+\end{tabular}}
+\caption{Algorithm processing times for varying numbers of threads. In milliseconds.}
+\label{table-algorithmsdifferentthreads}
+\end{table}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
