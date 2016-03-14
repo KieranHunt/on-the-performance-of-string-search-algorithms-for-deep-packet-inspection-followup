@@ -64,13 +64,13 @@ In \citep{hunt2016}, the authors compare a number string search algorithms again
 
 \subsection{Datasets}
 
-Table \ref{table-datasets} presents the datasets used throughout the rest of the paper. In Table \ref{table-datasets}, '$\mu$ Input Length' refers the mean length of the inputs, in bytes, within that dataset and '\# Inputs' refers to the number of inputs in that dataset. Both \textit{Dataset A} and \textit{Dataset B} have been reused from the earlier datasets used in \citet{hunt2016}.
+Table \ref{table-datasets} presents the datasets used throughout the rest of the paper. In Table \ref{table-datasets}, '$\mu$ Length' refers the mean length of the inputs, in bytes, within that dataset and '\# Inputs' refers to the number of inputs in that dataset. An input is defined as a Both \textit{Dataset A} and \textit{Dataset B} have been reused from the earlier datasets used in \citet{hunt2016}.
 
 \begin{table}[!htb]
 \centering
 \begin{tabular}{@{}lp{0.5\textwidth}ll@{}}
 \toprule
-Name & Description & $\mu$ Length & \#Inputs \\ \midrule
+Name & Description & $\mu$ Length & \# Inputs \\ \midrule
 \textit{Dataset A} & Real-world DNS traffic & 109.61 & 10000 \\
 \textit{Dataset B} & Full text of \textit{Alice in Wonderland} by Lewis Carroll & 163780 & 1 \\
 \textit{Dataset C} & Randomly generated DNS traffic with a payload size between 0 and 1500 bytes & 770.89 & 10000 \\
@@ -231,7 +231,7 @@ RabinKarp & 16 & 16 & 16 \\ \bottomrule
 \label{table-threadcompare}
 \end{table}
 
-Table \ref{table-threadcompare} shows that for shorter inputs, fewer threads are more efficient.
+Table \ref{table-threadcompare} shows that for shorter inputs, fewer threads are more efficient. Furthermore, as is apparent in both Figure \ref{figure-processingtimevsinputlengthdifferentcores} and Table \ref{table-threadcompare}, the faster algorithms tend to be more efficient at lessor numbers of threads for the same input lengths as the slower algorithms.
 
 \bibliographystyle{plainnat}
 \bibliography{references}
